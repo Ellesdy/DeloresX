@@ -68,6 +68,14 @@
               "required": true
             }
           ]
+        },
+        {
+          "name": "join",
+          "description": "Instruct the bot to join your voice channel and start listening."
+        },
+        {
+          "name": "leave",
+          "description": "Instruct the bot to leave your voice channel."
         }
       ]
     }

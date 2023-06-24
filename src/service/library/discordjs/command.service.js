@@ -1,3 +1,5 @@
+const { MessageEmbed } = require('discord.js');
+
 class CommandService {
   constructor(
     configService,
@@ -7,7 +9,8 @@ class CommandService {
     loggerService,
     validationHelperService,
     vcManagerService,
-    verifyService
+    verifyService,
+    voiceCommandService // Add the VoiceCommandService as a dependency
   ) {
     this.configService = configService;
     this.clientService = clientService;
@@ -17,6 +20,7 @@ class CommandService {
     this.validationHelperService = validationHelperService;
     this.vcManagerService = vcManagerService;
     this.verifyService = verifyService;
+    this.voiceCommandService = voiceCommandService; // Store the VoiceCommandService
   }
 
   async registerCommands() {
@@ -71,7 +75,27 @@ class CommandService {
         unverifiedRoleID: (process.env.UNVERIFIED_ROLE_ID),
         verifiedRoleID: (process.env.VERIFIED_ROLE_ID)
       });
+    } else if (commandName === 'join') {
+      await this.handleJoinCommand(interaction);
     }
+  }
+
+  async handleJoinCommand(interaction) {
+    // Check if the user is in a voice channel
+    const voiceChannel = interaction.member.voice.channel;
+    if (!voiceChannel) {
+      await interaction.reply('You need to be in a voice channel for me to join!');
+      return;
+    }
+
+    // Instruct the VoiceCommandService to join the voice channel
+    await this.voiceCommandService.joinChannel(voiceChannel);
+
+    // Send a confirmation message
+    const embed = new MessageEmbed()
+      .setColor('#00ff00')
+      .setDescription(`Successfully joined ${voiceChannel.name}!`);
+    await interaction.reply({ embeds: [embed] });
   }
 }
 

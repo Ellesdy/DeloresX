@@ -8,10 +8,11 @@ const ChatGPTService = require('./library/chatgpt/chatgpt.service');
 const LifecycleHelperService = require('./helper/lifecycle.helper.service');
 const StartupService = require('./system/startup.service');
 const ValidationHelperService = require('./helper/validation.helper.service');
-const VCManagerService = require('./feature/vcmanager.service')
-const VerifyService = require('./feature/verify.service')
+const VCManagerService = require('./feature/vcmanager.service');
+const VerifyService = require('./feature/verify.service');
 const ConversationHelperService = require('./helper/conversation.helper.service');
 const MemberService = require('./library/discordjs/member.service');
+const VoiceCommandService = require('./feature/voicecommand.service'); // Import the VoiceCommandService
 
 class ServiceFactory {
     static createServices() {
