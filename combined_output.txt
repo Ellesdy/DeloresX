@@ -1,0 +1,1040 @@
+----- BEGIN FILE: src\model\conversationcache.model.js -----
+class ConversationCache {
+    constructor() {
+      this.cache = new Map();
+    }
+  
+    get(userId) {
+      return this.cache.get(userId);
+    }
+  
+    set(userId, conversation) {
+      this.cache.set(userId, conversation);
+    }
+  }
+  
+  module.exports = ConversationCache;
+----- END FILE: src\model\conversationcache.model.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\model\embedparam.model.js -----
+class EmbedParam {
+    constructor(name, value) {
+      this.name = name;
+      this.value = value;
+    }
+  }
+  
+  module.exports = EmbedParam;
+----- END FILE: src\model\embedparam.model.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\model\reactionrole.model.js -----
+class ReactionRoleModel {
+    constructor(roleName, emoji) {
+        this.roleName = roleName;
+        this.emoji = emoji;
+    }
+}
+
+module.exports = ReactionRoleModel;
+----- END FILE: src\model\reactionrole.model.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\model\reactionrolegroup.model.js -----
+class ReactionRoleGroupModel {
+  constructor(name, message, members, inline) {
+    this.name = name;
+    this.message = message;
+    this.members = members;
+    this.inline = inline;
+  }
+}
+
+module.exports = ReactionRoleGroupModel;
+----- END FILE: src\model\reactionrolegroup.model.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\repository\config.repository.js -----
+module.exports = {
+    ChannelJSON: require('../config/channel.config.json'),
+    CommandJSON: require('../config/command.config.json'),
+    ReactionRoleJSON: require('../config/reactionrole.config.json'),
+    RoleJSON: require('../config/role.config.json'),
+    SystemJSON: require('../config/system.config.json'),
+  };
+----- END FILE: src\repository\config.repository.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\feature\reactionrole.service.js -----
+class ReactionRoleService {
+    constructor(configService, loggerService, roleService, memberService) {
+      this.configService = configService;
+      this.loggerService = loggerService;
+      this.roleService = roleService;
+      this.memberService = memberService;
+    }
+
+    GetReactionRoleGroups() {
+      return this.configService.ReactionRole.members;
+    }
+
+    IsRoleReaction(reaction) {
+      return this.GetAllReactionRoles().find((reactionRole) => reactionRole.Emoji === reaction.emoji.toString());
+    }
+
+    GetReactionRole(reaction) {
+      return this.GetAllReactionRoles().find((x) => x.Emoji === reaction.emoji.toString());
+    }
+
+    GetAllReactionRoles() {
+      return this.GetReactionRoleGroups().map((group) => group.Members).flat();
+    }
+
+    SetupReactionRoleListeners() {
+        this.clientService.client.on('messageReactionAdd', async (reaction, user) => {
+        if (reaction.partial) await reaction.fetch();
+        if (user.bot) return;
+
+        if (reaction.emoji.name === '⭐') {
+          await this.HandshakeTOS(user);
+        } else {
+          await this.ApplyReactionRoleChange(reaction, user);
+        }
+      });
+
+      this.clientService.client.on('messageReactionRemove', async (reaction, user) => {
+        if (reaction.partial) await reaction.fetch();
+        if (user.bot) return;
+
+        this.ApplyReactionRoleChange(reaction, user, true);
+      });
+    }
+
+    HandshakeTOS(user) {
+      const member = XenCord.Client.guilds.cache.get(this.configService.System.guildID)?.members.cache.get(user.id);
+      member.roles.add(this.roleService.getRulesRole().id);
+    }
+
+    ApplyReactionRoleChange(reaction, user, remove = false) {
+      const reactionRoleEmoji = this.IsRoleReaction(reaction);
+
+      if (reactionRoleEmoji) {
+        const member = this.memberService.GetMemberFromUser(user.id);
+        const reactionRole = this.GetReactionRole(reaction);
+        const memberRole = this.roleService.GetRoleByName(reactionRole.RoleName);
+        if (reactionRole) {
+          if (remove) {
+            member.roles.remove(memberRole);
+          } else {
+            member.roles.add(memberRole);
+          }
+        }
+      }
+    }
+}
+module.exports = ReactionRoleService;
+
+
+----- END FILE: src\service\feature\reactionrole.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\feature\vcmanager.service.js -----
+const { PermissionsBitField, EmbedBuilder } = require('discord.js');
+
+class VCManagerService {
+  constructor() {}
+
+  async create(interaction, name, limit) {
+    // Create the channel
+    const channel = await interaction.guild.channels.create(name, {
+      type: 'GUILD_VOICE',
+      userLimit: limit,
+      permissionOverwrites: [
+        {
+          id: interaction.guild.roles.everyone.id,
+          deny: PermissionsBitField.Flags.ViewChannel,
+          type: 'role',
+        },
+        {
+          id: interaction.user.id,
+          allow: PermissionsBitField.Flags.Connect | PermissionsBitField.Flags.ViewChannel,
+          type: 'member',
+        },
+      ],
+    });
+    return channel;
+  }
+
+  async limit(interaction, channel, limit){
+    // Check if user has permission to change the user limit
+    const permissions = channel.permissionsFor(interaction.user);
+    if (!permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+      throw new Error('You do not have permission to change the user limit.');
+    }
+
+    // Update the user limit
+    await channel.edit({ userLimit: limit });
+
+    // Send confirmation message
+    const embed = new EmbedBuilder()
+      .setColor('#00ff00')
+      .setDescription(`Successfully updated user limit to ${limit}!`)
+    await interaction.reply({ embeds: [embed] });
+  }
+
+  async allow(interaction, channel, user) {
+    // Check if the command issuer has permission to manage the channel
+    const permissions = channel.permissionsFor(interaction.user);
+    if (!permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+      throw new Error('You do not have permission to manage the channel.');
+    }
+
+    // Allow the specified user to join the channel
+    await channel.permissionOverwrites.edit(user, {
+      [PermissionsBitField.Flags.Connect]: true,
+      [PermissionsBitField.Flags.ViewChannel]: true,
+    });
+
+    // Send confirmation message
+    const embed = new EmbedBuilder()
+      .setColor('#00ff00')
+      .setDescription(`Successfully allowed ${user.tag} to join the channel.`);
+    await interaction.reply({ embeds: [embed] });
+  }
+
+  async kick(interaction, channel, user) {
+    // Check if the command issuer has permission to manage the channel
+    const permissions = channel.permissionsFor(interaction.user);
+    if (!permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+      throw new Error('You do not have permission to manage the channel.');
+    }
+  
+    // Check if the specified user is in the channel
+    if (user.voice.channelId !== channel.id) {
+      throw new Error(`${user.tag} is not in the specified channel.`);
+    }
+  
+    // Kick the specified user from the channel
+    await user.voice.setChannel(null);
+  
+    // Send confirmation message
+    const embed = new EmbedBuilder()
+      .setColor('#00ff00')
+      .setDescription(`Successfully kicked ${user.tag} from the channel.`);
+    await interaction.reply({ embeds: [embed] });
+  }
+
+
+}
+
+module.exports = VCManagerService;
+----- END FILE: src\service\feature\vcmanager.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\feature\verify.service.js -----
+class VerifyService {
+  constructor(configService) {
+    this.configService = configService;
+  }
+
+  async verify(interaction) {
+    if (!this.hasVerifyRole(interaction)) {
+      return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
+    }
+
+    const userToVerify = interaction.options.getUser('user');
+
+    if (!userToVerify) {
+      return interaction.reply({ content: 'Please mention a user to verify.', ephemeral: true });
+    }
+
+    const memberToVerify = await interaction.guild.members.fetch(userToVerify);
+
+    if (!this.isValidMember(memberToVerify)) {
+      return interaction.reply({ content: 'Unable to verify the user.', ephemeral: true });
+    }
+
+    await this.updateRoles(memberToVerify);
+    interaction.reply({ content: `${memberToVerify.user.username} has been verified!`, ephemeral: true });
+  }
+
+  hasVerifyRole(interaction) {
+    return interaction.member.roles.cache.has(this.configService.Role.Verify);
+  }
+
+  isValidMember(member) {
+    return member && member.user;
+  }
+
+  async updateRoles(member) {
+    await member.roles.remove(this.configService.Role.Unverified);
+    await member.roles.add(this.configService.Role.Verified);
+  }
+}
+
+module.exports = VerifyService;
+----- END FILE: src\service\feature\verify.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\helper\conversation.helper.service.js -----
+const ConversationCacheModel = require('../../model/conversationcache.model');
+class ConversationHelperServicer {
+  conversationCache = new ConversationCacheModel();
+  getConversation(userId) {
+    return this.conversationCache.get(userId);
+  }
+
+  async updateConversation(userId, messageObj) {
+    let conversation = await this.getConversation(userId) || [];
+    conversation.push(messageObj);
+    if (conversation.length > 9) {
+      conversation.shift();
+    }
+    this.conversationCache.set(userId, conversation);
+  }
+}
+
+module.exports = ConversationHelperServicer;
+----- END FILE: src\service\helper\conversation.helper.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\helper\lifecycle.helper.service.js -----
+class LifecycleHelperService {
+  constructor(clientService, commandService, conversationService, chatGPTService, messageService, channelService, sendTyping) {
+    this.clientService = clientService;
+    this.commandService = commandService;
+    this.conversationService = conversationService;
+    this.chatGPTService = chatGPTService;
+    this.messageService = messageService;
+    this.channelService = channelService;
+  }
+
+  async setupListeners() {
+    await this.clientService.client.on('ready', async () => {
+      console.log(`Logged in as ${this.clientService.client.user.tag}!`);
+      await this.commandService.setupListeners();
+      await this.commandService.registerCommands();
+    });
+
+    this.clientService.client.on('messageCreate', async (message) => {
+      if (message.author.bot) return;
+      if (message.mentions.has(this.clientService.client.user)) {
+        const typing = message.channel.sendTyping();
+        const userId = message.author.id;
+        const content = message.content;
+        const response = await this.chatGPTService.handleMessage(userId, content);
+    
+        if (response.length === 0) {
+          return;
+        }
+    
+        if (typeof response === 'string') {
+          await this.messageService.sendDiscordMessage(message.channel, response);
+        } else {
+          let combinedResponse = '';
+    
+          for (let i = 0; i < response.length; i++) {
+            const messageContent = response[i].content.trim();
+    
+            if (messageContent !== '') {
+              const responseText = combinedResponse + messageContent;
+    
+              if (responseText.length <= 2000) {
+                combinedResponse = responseText;
+              } else {
+                await this.messageService.sendDiscordMessage(message.channel, combinedResponse);
+                combinedResponse = messageContent;
+              }
+            }
+            typing.stop();
+            if (i === response.length - 1) {
+              await this.messageService.sendDiscordMessage(message.channel, combinedResponse);
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
+module.exports = LifecycleHelperService;
+
+----- END FILE: src\service\helper\lifecycle.helper.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\helper\validation.helper.service.js -----
+class ValidationHelperService {
+  constructor(loggerService, configService) {
+    this.loggerService = loggerService;
+    this.configService = configService;
+  }
+
+  logValidationStart(validationType) {
+    this.loggerService.logSystem(`Starting ${validationType} validation...`);
+  }
+
+  logValidationSuccess(validationType, message) {
+    this.loggerService.logSuccess(`Validation succeeded for ${validationType}: ${message}`);
+  }
+
+  logValidationFailure(validationType, message, error) {
+    this.loggerService.logError(`Validation failed for ${validationType}: ${message}`, error);
+  }
+
+  logValidationEnd(validationType) {
+    this.loggerService.logSystem(`Completed ${validationType} validation.`);
+  }
+
+  validateConfig(config) {
+    if (config === null || config === undefined) {
+      throw new Error('Config is null or undefined.');
+    }
+
+    // try {
+    //   return JSON.parse(config);
+    // } catch (e) {
+    //   throw new Error(`Error parsing config: ${e.message}`);
+    // }
+  }
+
+  async validateAll() {
+    const configs = this.configService.GetAllConfigs();
+    this.logValidationStart('config');
+
+    for (let config of configs) {
+      try {
+        this.validateConfig(config.Content);
+        this.logValidationSuccess('config', config.Name);
+      } catch (error) {
+        this.logValidationFailure('config', config.Name, error);
+      }
+    }
+
+    this.logValidationEnd('config');
+  }
+}
+
+module.exports = ValidationHelperService;
+----- END FILE: src\service\helper\validation.helper.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\library\chatgpt\chatgpt.service.js -----
+const axios = require("axios")
+const fs = require('fs');
+const contentFromFile = fs.readFileSync('./Dolores.txt', 'utf8');
+class ChatGPTService {
+  constructor(conversationService) {
+    this.conversationService = conversationService;
+    this.configService = ConfigService;
+  }
+
+  async getResponse(conversation, userId) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.configService.System.openAiKey}`,
+    };
+
+    const messages = [
+      {
+        role: "system",
+        content: contentFromFile,
+      },
+    ].concat(conversation.map((message) => ({
+      role: message.role,
+      content: message.content ? message.content.replace(/<@!?(\d+)>/g, '') : '' // Check if content is defined before applying replace function
+    })));
+  
+    const data = {
+      model: "gpt-4",
+      messages: messages,
+      max_tokens: 1024,
+      temperature: 0.7,
+    };
+  
+    try {
+      const response = await axios.post(
+          "https://api.openai.com/v1/chat/completions",
+          data,
+          { headers: headers }
+      );
+  
+      const gptResponse = response.data.choices[0].message.content.trim();
+      this.conversationService.updateConversation(userId, {
+        role: "assistant",
+        content: gptResponse,
+      });
+      return gptResponse;
+      
+    } catch (error) {
+      console.error("Error getting ChatGPT response:", error);
+      return "I'm sorry, but I couldn't process your message.";
+    }
+  }
+
+  async handleMessage(userId, content) {
+
+    await this.conversationService.updateConversation(userId, {
+      role: 'user',
+      content: content,
+    });
+
+    const conversation = await this.conversationService.getConversation(userId) || [];
+    const response = await this.getResponse(conversation, userId);
+
+    await this.conversationService.updateConversation(userId, {
+        role: 'assistant',
+        content: response,
+    });
+    return response;
+  }
+}
+
+module.exports = ChatGPTService;
+----- END FILE: src\service\library\chatgpt\chatgpt.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\library\discordjs\channel.service.js -----
+class ChannelService  {
+  Validate = () => {
+    this.Logger.Log.System(this.Message.Messages.system.startup.channel.start);
+    this.GetSystemChannels().forEach((option) => {
+      let channel = this.GetChannel(option[1]);
+      if (channel !== undefined) {
+        this.Logger.Log.Success(
+          `${this.Message.Messages.system.startup.channel.success}${option[0]} [${channel.name}]`
+        );
+      } else {
+        this.Logger.Log.Error(
+          `${this.Message.Messages.error.startup.channel}${option}`
+        );
+      }
+    });
+    this.Logger.Log.System(this.Message.Messages.system.startup.channel.done);
+  };
+
+  GetChannel = (channelID) => {
+    return this.Client.channels.cache.get(channelID);
+  };
+
+  GetSystemChannel = (channelIndex) => {
+    return this.GetChannel(
+      this.GetSystemChannels().find((channel) => {
+        return channel[0] == channelIndex;
+      })[1]
+    );
+  };
+
+  GetSystemChannels = () => {
+    let channelConfig = Object(this.Config.Channel);
+    return Object.keys(channelConfig)
+      .filter((option) => {
+        return option != 'Name';
+      })
+      .map((channel) => {
+        return [channel, channelConfig[channel]];
+      });
+  };
+}
+
+module.exports = ChannelService;
+----- END FILE: src\service\library\discordjs\channel.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\library\discordjs\client.service.js -----
+const { Client } = require('discord.js');
+class ClientService {
+  client;
+  constructor() {
+    this.client = this.createClient();
+  }
+
+  createClient() {
+    return new Client({intents: 32767});
+  }
+
+  get Client() {
+    return this.client;
+  }
+  async login() {
+    try {
+      await this.client.login(process.env.BOT_TOKEN);
+      console.log('Bot is now connected!');
+    } catch (error) {
+      console.error('Error connecting to Discord:', error);
+    }
+  }
+}
+
+module.exports = ClientService;
+----- END FILE: src\service\library\discordjs\client.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\library\discordjs\command.service.js -----
+class CommandService {
+  constructor(
+    configService,
+    clientService,
+    guildService,
+    messageService,
+    loggerService,
+    validationHelperService,
+    vcManagerService,
+    verifyService
+  ) {
+    this.configService = configService;
+    this.clientService = clientService;
+    this.guildService = guildService;
+    this.messageService = messageService;
+    this.loggerService = loggerService;
+    this.validationHelperService = validationHelperService;
+    this.vcManagerService = vcManagerService;
+    this.verifyService = verifyService;
+  }
+
+  async registerCommands() {
+      const guild = await this.guildService.getGuild();
+      this.validationHelperService.validateConfig(this.configService.Command.commands);
+
+      this.loggerService.logSystem(
+        `${this.messageService.Messages.command.register.prefix} ${this.messageService.Messages.command.register.start}`
+      );
+
+      for (const [commandName, commandData] of Object.entries(this.configService.Command.commands)) {
+        await guild.commands.create(commandData);
+        this.loggerService.logSuccess(`Registered command: ${commandName}`);
+      }
+
+      this.loggerService.logSuccess(
+        `${this.messageService.Messages.command.register.prefix} ${this.messageService.Messages.command.register.success}`
+      );
+    // } catch (error) {
+    //   this.loggerService.logError(error.message, error);
+    // }
+  }
+
+  setupListeners() {
+    this.clientService.Client.on('interactionCreate', async (interaction) => {
+      if (interaction.isCommand()) {
+        this.bind(interaction);
+      }
+    });
+  }
+
+  async bind(interaction) {
+    const { commandName, options } = interaction;
+
+    if (commandName === 'channel') {
+      const subcommand = options.getSubcommand();
+      const subcommands = {
+        create: this.vcManagerService.create.bind(this.vcManagerService),
+        limit: this.vcManagerService.limit.bind(this.vcManagerService),
+        allow: this.vcManagerService.allow.bind(this.vcManagerService),
+        kick: this.vcManagerService.kick.bind(this.vcManagerService),
+      };
+
+      if (subcommands[subcommand]) {
+        await subcommands[subcommand](interaction);
+      } else {
+        await interaction.reply('Unknown subcommand.');
+      }
+    } else if (commandName === 'verify') {
+      await this.verifyService.verify(interaction, {
+        unverifiedRoleID: (process.env.UNVERIFIED_ROLE_ID),
+        verifiedRoleID: (process.env.VERIFIED_ROLE_ID)
+      });
+    }
+  }
+}
+
+module.exports = CommandService;
+----- END FILE: src\service\library\discordjs\command.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\library\discordjs\embed.service.js -----
+const { EmbedBuilder } = require('discord.js');
+const EmbedParam = require('../../../model/embedparam.model');
+
+class EmbedService {
+  static createReactionRoleEmbed(reactionRoleGroup) {
+    const embedFields = reactionRoleGroup.members.map((member) => new EmbedParam(member.roleName, member.emoji));
+    return createBasicEmbedFromData(reactionRoleGroup.name, reactionRoleGroup.message, embedFields, reactionRoleGroup.inline);
+  }
+}
+
+const createBasicEmbed = (title, description) => {
+  return new EmbedBuilder()
+    .setTitle(title)
+    .setDescription(description)
+    .setColor('#ff0000');
+};
+
+const createBasicEmbedFromData = (title, description, embedParams, inline) => {
+  const embed = createBasicEmbed(title, description);
+  embedParams.forEach((data) => {
+    if (inline) {
+      embed.addFields({ name: data.name, value: data.value, inline: true });
+    } else {
+      embed.addFields({ name: `${data.name} // ${data.value}`, value: '--------------------', inline: false });
+    }
+  });
+  return embed;
+};
+
+module.exports = EmbedService;
+----- END FILE: src\service\library\discordjs\embed.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\library\discordjs\guild.service.js -----
+class GuildService {
+  constructor(clientService) {
+    this.clientService = clientService;
+  }
+
+  getGuild() {
+    return this.clientService.client.guilds.cache.get(process.env.GUILD_ID);
+  }
+}
+
+module.exports = GuildService;
+----- END FILE: src\service\library\discordjs\guild.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\library\discordjs\member.service.js -----
+class MemberService {
+    constructor(configService, clientService) {
+      this.configService = configService;
+      this.clientService = clientService;
+    }
+  
+    getMemberFromUser(userID) {
+      return this.clientService.client.guilds.cache.get(this.configService.System.guildID).members.cache.get(userID);
+    }
+  }
+  
+  module.exports = MemberService;
+----- END FILE: src\service\library\discordjs\member.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\service.factory.js -----
+const BroadcastService = require('./system/broadcast.service');
+const LoggerService = require('./system/logger.service');
+const ConfigService = require('./system/config.service');
+const ClientService = require('./library/discordjs/client.service');
+const GuildService = require('./library/discordjs/guild.service');
+const CommandService = require('./library/discordjs/command.service');
+const ChatGPTService = require('./library/chatgpt/chatgpt.service');
+const LifecycleHelperService = require('./helper/lifecycle.helper.service');
+const StartupService = require('./system/startup.service');
+const ValidationHelperService = require('./helper/validation.helper.service');
+const VCManagerService = require('./feature/vcmanager.service')
+const VerifyService = require('./feature/verify.service')
+const ConversationHelperService = require('./helper/conversation.helper.service');
+const MemberService = require('./library/discordjs/member.service');
+
+class ServiceFactory {
+    static createServices() {
+        const broadcastService = new BroadcastService();
+        const loggerService = new LoggerService(broadcastService);
+        const configService = new ConfigService(loggerService);
+        const clientService = new ClientService();
+
+        const guildService = new GuildService(clientService);
+        const memberService = new MemberService(configService, clientService);
+        const vcManagerService = new VCManagerService();
+        const validationHelperService = new ValidationHelperService(loggerService, configService);
+        const verifyService = new VerifyService(configService);
+        const commandService = new CommandService(
+            configService,
+            clientService,
+            guildService,
+            broadcastService,
+            loggerService,
+            validationHelperService,
+            vcManagerService,
+            verifyService
+        );
+        const conversationService = new ConversationHelperService();
+        const chatGPTService = new ChatGPTService(conversationService);
+        const lifecycleHelperService = new LifecycleHelperService(
+            clientService,
+            commandService,
+            conversationService,
+            chatGPTService,
+            broadcastService
+        );
+        const startupService = new StartupService(clientService, lifecycleHelperService, validationHelperService, commandService);
+
+        return {
+            clientService,
+            guildService,
+            commandService,
+            chatGPTService,
+            lifecycleHelperService,
+            startupService,
+            broadcastService,
+            loggerService,
+            configService,
+            vcManagerService,
+            validationHelperService,
+            verifyService,
+            memberService
+        };
+    }
+}
+
+module.exports = ServiceFactory;
+----- END FILE: src\service\service.factory.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\system\broadcast.service.js -----
+const MessageJSON = require('../../config/message.config.json');
+
+class BroadcastService {
+  constructor() {
+    this.Messages = MessageJSON;
+  }
+
+  async sendDiscordMessage(channel, content) {
+    const maxLength = 2000;
+  
+    if (content.length <= maxLength) {
+      await channel.send(content);
+    } else {
+      const messageParts = [];
+      let message = content;
+  
+      while (message.length > 0) {
+        if (message.length <= maxLength) {
+          messageParts.push(message);
+          message = '';
+        } else {
+          let subMessage = message.substring(0, maxLength);
+  
+          // Look for whitespace within last 10 characters
+          const index = subMessage.lastIndexOf(' ');
+          if (index >= subMessage.length - 10 && index !== -1) {
+            subMessage = subMessage.substring(0, index);
+          }
+  
+          // Strip the last character if it is a whitespace
+          if (subMessage.charAt(subMessage.length - 1) === ' ') {
+            subMessage = subMessage.substring(0, subMessage.length - 1);
+          }
+  
+          messageParts.push(subMessage);
+          message = message.substring(subMessage.length).trim();
+        }
+      }
+  
+      for (const part of messageParts) {
+        await channel.send(part);
+      }
+    }
+  }
+}
+
+module.exports = BroadcastService;
+----- END FILE: src\service\system\broadcast.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\system\config.service.js -----
+const {
+  ChannelJSON,
+  CommandJSON,
+  ReactionRoleJSON,
+  RoleJSON,
+  SystemJSON,
+} = require('../../repository/config.repository');
+
+  
+class ConfigService {
+  Channel = ChannelJSON;
+  Command = CommandJSON;
+  ReactionRole = ReactionRoleJSON;
+  Role = RoleJSON;
+  System = SystemJSON;
+
+  constructor() {}
+
+  GetAllConfigs = () => {
+    return [
+      ChannelJSON,
+      CommandJSON,
+      ReactionRoleJSON,
+      RoleJSON,
+      SystemJSON,
+    ];
+  };
+}
+
+  module.exports = ConfigService;
+----- END FILE: src\service\system\config.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\system\logger.service.js -----
+const chalk = require('chalk');
+
+const MessageCode = {
+  SYSTEM: 'system',
+  SUCCESS: 'success',
+  ERROR: 'error',
+  DEBUG: 'debug',
+};
+
+class LoggerService {
+  constructor(messageService) {
+    this.messageService =  messageService;
+  }
+
+  logSystem(message) {
+    this.logMessage(MessageCode.SYSTEM, message, chalk.yellow);
+  }
+
+  logError(error) {
+    if (error instanceof Error) {
+      this.logMessage(MessageCode.ERROR, error.message, chalk.red);
+    }
+  }
+
+  logSuccess(message) {
+    this.logMessage(MessageCode.SUCCESS, message, chalk.green);
+  }
+
+  logMessage(type, message, consoleColor) {
+    const prefix = consoleColor(this.messageService.Messages.logging.prefix[type]);
+    const logTime = chalk.blueBright(
+      `${new Date().toLocaleDateString('en-US')} ${new Date().toLocaleTimeString('en-US')}`
+    );
+    console.log(`<${prefix}>: ${message} [${logTime}]`);
+  }
+}
+
+module.exports = LoggerService;
+----- END FILE: src\service\system\logger.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\service\system\startup.service.js -----
+//It may seem redundant to pass these dependencies [openai, messageHandler, guildService] in through the constructor instead of doing a hard import,
+//But this allows us to "stub" them out later for "unit testing" which by definition can only be dependent on one file. This is one area in which
+//We still add boilerplate bullshit code for the sake of testing, while in most other cases you wouldn't change code for tests.
+class StartupService {
+    constructor(clientService, lifecycleHelperService, validationHelperService, commandService) {
+        this.clientService = clientService;
+        this.lifecycleHelperService = lifecycleHelperService;
+        this.validationHelperService = validationHelperService;
+        this.commandService = commandService;
+    }
+  
+    async init() {
+        await this.validationHelperService.validateAll();
+        await this.lifecycleHelperService.setupListeners();
+        await this.clientService.login();
+    }
+  }
+  
+  module.exports = StartupService;
+----- END FILE: src\service\system\startup.service.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\system\DCodex.js -----
+
+----- END FILE: src\system\DCodex.js -----
+
+
+// DELIMITER
+
+
+----- BEGIN FILE: src\system\DServer.js -----
+const DServer = require('./d-server');
+
+class WebServerService {
+  constructor(port, publicPath) {
+    this.server = new DServer(port, publicPath);
+  }
+
+  start() {
+    this.server.start();
+  }
+
+  stop() {
+    this.server.close();
+  }
+}
+
+module.exports = WebServerService;
+----- END FILE: src\system\DServer.js -----
+
+
+// DELIMITER
+
+
