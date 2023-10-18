@@ -35,11 +35,7 @@ describe('ValidationHelperService', () => {
     });
 
     // it('should throw an error if JSON parsing fails', () => {
-<<<<<<< Updated upstream
-    //   expect(() => validationHelperService.validateConfig(testValues.invalidConfig)).toThrow('Error parsing config:');
-=======
     //   expect(() => validationHelperService.validateConfig('invalid json')).toThrow('Error parsing config:');
->>>>>>> Stashed changes
     // });
 
     it('should not throw an error if config is valid', () => {

@@ -15,7 +15,7 @@ describe('ChatGPTService', () => {
     userId = '123456789';
     content = 'How are you?';
     expectedResponse = `I am an AI, so I don't have emotions, but I'm here to help you.`;
-    contentFromFile = fs.readFileSync('./combined_output.txt', 'utf8');
+    contentFromFile = fs.readFileSync('./system.txt', 'utf8');
   });
 
   afterEach(() => {

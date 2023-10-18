@@ -7,20 +7,36 @@ class VoiceCommandService {
     this.speechToTextService = new SpeechToTextService();
   }
 
-  async joinChannel(channel) {
+  async joinAndListen(channel) {
     const connection = await channel.join();
     const receiver = connection.receiver;
-    receiver.on('pcm', this.handleVoiceData.bind(this));
+
+    connection.on('speaking', (user, speaking) => {
+      if (speaking) {
+        const audioStream = receiver.createStream(user, { mode: 'pcm' });
+        this.processAudioStream(audioStream);
+      }
+    });
   }
 
-  async handleVoiceData(data) {
-    const text = await this.speechToTextService.convert(data);
-    const command = this.parseCommand(text);
-    this.vcManagerService.handleCommand(command);
+  async processAudioStream(audioStream) {
+    // Convert the audio stream to a buffer
+    const audioBuffer = [];
+    audioStream.on('data', (chunk) => {
+      audioBuffer.push(chunk);
+    });
+
+    audioStream.on('end', async () => {
+      const buffer = Buffer.concat(audioBuffer);
+      const transcription = await this.speechToTextService.transcribe(buffer);
+      this.processTranscription(transcription);
+    });
   }
 
-  parseCommand(text) {
-    // Parse the text into a command and arguments
+  processTranscription(transcription) {
+    // Process the transcribed text for commands or other relevant information
+    console.log(`Transcribed Text: ${transcription}`);
+    // Add your command processing logic here
   }
 }
 

@@ -21,8 +21,10 @@ describe('ClientService', () => {
   });
 
   it('should log the bot in', async () => {
-    const loginSpy = jest.spyOn(clientService.client, 'login').mockImplementation(() => {});
+    const loginSpy = jest.spyOn(clientService.client, 'login').mockResolvedValue('mocked_token');
     await clientService.login();
     expect(loginSpy).toHaveBeenCalled();
   });
+
+
 });

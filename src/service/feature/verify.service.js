@@ -4,15 +4,11 @@ class VerifyService {
   }
 
   async verify(interaction) {
-<<<<<<< Updated upstream
-    if (!this.hasVerifyRole(interaction)) {
-=======
     // Check if the sender has the required roles
     const hasVerifyRole = interaction.member.roles.cache.has(this.configService.Role.Verify);
     const hasAdministratorRole = interaction.member.roles.cache.has(process.env.VERIFY_ROLE_ID);
   
     if (!hasVerifyRole) {
->>>>>>> Stashed changes
       return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
     }
 

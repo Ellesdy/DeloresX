@@ -1,5 +1,6 @@
 const ClientService = require('../../../../src/service/library/discordjs/client.service');
 const GuildService = require('../../../../src/service/library/discordjs/guild.service');
+const ConfigService = require('../../../../src/service/system/config.service');
 
 describe('GuildService', () => {
   let clientService;
@@ -12,7 +13,8 @@ describe('GuildService', () => {
 
   describe('getGuild', () => {
     it('should return the guild with the specified ID', () => {
-      const guildId = (process.env.GUILD_ID);
+      const configService = new ConfigService();
+      const guildId = configService.getConfigValue('System.guildID'); // Corrected key
       const guildMock = { name: 'Test Guild', id: guildId };
       clientService.client.guilds.cache.get = jest.fn().mockReturnValue(guildMock);
 

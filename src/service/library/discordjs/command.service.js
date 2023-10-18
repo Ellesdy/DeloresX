@@ -72,8 +72,8 @@ class CommandService {
       }
     } else if (commandName === 'verify') {
       await this.verifyService.verify(interaction, {
-        unverifiedRoleID: (process.env.UNVERIFIED_ROLE_ID),
-        verifiedRoleID: (process.env.VERIFIED_ROLE_ID)
+        unverifiedRoleID: this.configService.getConfigValue('Client.unverifiedRoleID'),
+        verifiedRoleID: this.configService.getConfigValue('Client.verifiedRoleID')
       });
     } else if (commandName === 'join') {
       await this.handleJoinCommand(interaction);

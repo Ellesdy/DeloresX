@@ -1,10 +1,14 @@
-const axios = require("axios")
+const axios = require("axios");
 const fs = require('fs');
-const contentFromFile = fs.readFileSync('./Dolores.txt', 'utf8');
+const ConfigService = require('../../system/config.service'); // Adjust the path as necessary
+
+const contentFromFile = fs.readFileSync('./system.txt', 'utf8');
+
 class ChatGPTService {
   constructor(conversationService) {
     this.conversationService = conversationService;
-    this.apiKey = process.env.OPENAI_API_KEY;
+    this.configService = new ConfigService();
+    this.apiKey = this.configService.getConfigValue('System').openAIKey; // Assuming the key in the System config is 'openAIKey'
   }
 
   async getResponse(conversation, userId) {
@@ -51,7 +55,6 @@ class ChatGPTService {
   }
 
   async handleMessage(userId, content) {
-
     await this.conversationService.updateConversation(userId, {
       role: 'user',
       content: content,
