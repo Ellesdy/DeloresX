@@ -2,7 +2,7 @@
 *.class
 
 # Config files
-src/config/*.config.json
+*.config.json
 
 # Log file
 *.log
