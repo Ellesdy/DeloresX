@@ -1,0 +1,1344 @@
+// Content from src\config\channel.config.json
+{
+    "Name": "Channel",
+    "ReactionRole": "1096010054626459668",
+    "Announcement": "",
+    "Editorial": "",
+    "HallOfFame": "",
+    "Welcome": "",
+    "Testing": "",
+    "Rules": ""
+}
+
+// Content from src\config\client.config.json
+{
+    "Name": "Client",
+    "botToken": "MTE0MDc5MTMwMDQ5MzQzMDkwNg.GXZVCg.KvcQ1JcrAdKC-Ph3081rDB89Kd6vbQLABTE2JY",
+    "applicationID": "1140791300493430906",
+    "guildID": "1161749365489147934"
+}
+
+// Content from src\config\command.config.json
+{
+  "Name": "Command",
+  "commands": {
+    "verify": {
+      "name": "verify",
+      "description": "Verify a user by removing the 'Unverified' role and adding the 'Verified' role.",
+      "options": [
+        {
+          "name": "user",
+          "description": "The user you want to verify.",
+          "type": 6,
+          "required": true
+        }
+      ]
+    },
+    "channel": {
+      "name": "channel",
+      "description": "Manage voice channels",
+      "options": [
+        {
+          "name": "create",
+          "description": "Create a voice channel",
+          "type": 1,
+          "options": [
+            {
+              "name": "name",
+              "description": "The name of the voice channel",
+              "type": 3,
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "limit",
+          "description": "Set the user limit for your voice channel",
+          "type": 1,
+          "options": [
+            {
+              "name": "limit",
+              "description": "The user limit for the voice channel (0-99)",
+              "type": 4,
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "allow",
+          "description": "Allow a user to connect to your voice channel",
+          "type": 1,
+          "options": [
+            {
+              "name": "user",
+              "description": "The user you want to allow",
+              "type": 6,
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "kick",
+          "description": "Kick a user from your voice channel",
+          "type": 1,
+          "options": [
+            {
+              "name": "user",
+              "description": "The user you want to kick",
+              "type": 6,
+              "required": true
+            }
+          ]
+        },
+        {
+          "name": "join",
+          "description": "Instruct the bot to join your voice channel and start listening."
+        },
+        {
+          "name": "leave",
+          "description": "Instruct the bot to leave your voice channel."
+        }
+      ]
+    }
+  }
+}
+
+// Content from src\config\message.config.json
+{
+    "Name": "Message",
+	"error" : {
+        "text": {
+            "prefix": "INVALID TEXT:",
+            "badClearText": "Text could not be encrypted.",
+            "badEncryptedText": "Invalid Encrypted Text"
+        },
+        "permission": {
+            "prefix": "PERMISSION ERROR:",
+            "noPermissionRole": "You do not have any of the the required roles to use the decrypt function."
+        },
+        "key": {
+            "prefix": "KEY ERROR:",
+            "badSignature": "Signature could not be verified."
+        },
+        "abstract": {
+            "constructor": "Abstract classes can't be instantiated."
+        },
+        "startup": {
+            "config": "Config File Scan Failure: ",
+            "channel": "System Channel Scan Error: ",
+            "role": "System Role Scan Error: "
+        }
+    },
+    "command" : {
+        "register": {
+            "prefix": "REGISTRATION SERVICE:",
+            "start": "Started refreshing application (/) commands.",
+            "success": "Successfully reloaded application (/) commands."
+        }
+    },
+    "system": {
+        "startup": {
+            "start": "RunStartup executed",
+            "config": {
+                "start": "Starting Config File Scan...",
+                "success": "Successfully loaded Config File: ",
+                "done": "Config File import process was successful."
+            },
+            "channel": {
+                "start": "Checking For System Channels...",
+                "success": "Successfully found Channel: ",
+                "done": "System Channel validation process was successful."
+            },
+            "role": {
+                "start": "Checking For System Roles...",
+                "success": "Sucessfully found Role: ",
+                "done": "System Role validation process was successful."
+            },
+            "defaultroles": "The Default Member Role listener has been successfully configured",
+            "success": "XenBot RunStartup process was successful. XenBot is now running."
+        },
+        "member": {
+            "join": "Welcome to the server",
+            "lognew": "New Member joined the server: "
+        }
+    },
+    "logging": {
+        "prefix": {
+            "system": "SYSTEM",
+            "error": "ERROR",
+            "success": "SUCCESS",
+            "debug": "DEBUG"
+        }
+    }
+}
+
+
+// Content from src\config\reactionrole.config.json
+{   
+    "Name": "Reaction Role",
+    "members": [
+        {
+            "Name": "Language RoleNames",
+            "Message": "Pick the languages you're interested in:",
+            "Members": [
+                { "RoleName": "Java", "Emoji": "🧡" },
+                { "RoleName": "Python", "Emoji": "💚" },
+                { "RoleName": "JavaScript", "Emoji": "💛" },
+                { "RoleName": "C++", "Emoji": "💙" },
+                { "RoleName": "C#", "Emoji": "💜" },
+                { "RoleName": "Go", "Emoji": "🤍" },
+                { "RoleName": "Rust", "Emoji": "🤎" },
+                { "RoleName": "Ruby", "Emoji": "❤️" },
+                { "RoleName": "Unix", "Emoji": "💗" }
+            ],
+            "Inline": true
+        },
+        {
+            "Name": "Database",
+            "Message": "Pick the databases you're interested in:",
+            "Members": [
+                { "RoleName": "Firebase", "Emoji": "🟦" },
+                { "RoleName": "PostgreSQL", "Emoji": "🟩" },
+                { "RoleName": "SQL Server", "Emoji": "🟪" },
+                { "RoleName": "MySQL", "Emoji": "🟥" },
+                { "RoleName": "OracleDB", "Emoji": "🟧"},
+                { "RoleName": "MongoDB", "Emoji": "🟨" }
+            ],
+            "Inline": true
+        },
+        {
+            "Name": "Experience",
+            "Message": "What is your relative level of experience?",
+            "Members": [
+                { "RoleName": "Junior Developer", "Emoji": "🥉" },
+                { "RoleName": "Intermediate Developer", "Emoji": "🥈" },
+                { "RoleName": "Advanced Developer", "Emoji": "🥇" }
+            ],
+            "Inline": false
+        },
+        {
+            "Name": "Other Skills",
+            "Message": "Pick other skills you're interested in:",
+            "Members": [
+                { "RoleName": "Musician/Composer", "Emoji": "🎵" },
+                { "RoleName": "Graphic Artist", "Emoji": "🎨" },
+                { "RoleName": "Video Editor", "Emoji": "📽️" }
+            ],
+            "Inline": false
+        }
+    ]
+}
+
+// Content from src\config\role.config.json
+{
+    "Name": "Role",
+    "DefaultRole": "",
+	"BotRole": "",
+    "Rules": "",
+    "Unverified": "",
+    "Verified": "",
+    "Verify": ""
+}
+
+// Content from src\config\system.config.json
+{
+	"Name": "System",
+	"openAIKey": "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"
+}
+
+
+// Content from src\model\conversationcache.model.js
+class ConversationCache {
+    constructor() {
+      this.cache = new Map();
+    }
+  
+    get(userId) {
+      return this.cache.get(userId);
+    }
+  
+    set(userId, conversation) {
+      this.cache.set(userId, conversation);
+    }
+  }
+  
+  module.exports = ConversationCache;
+
+// Content from src\model\embedparam.model.js
+class EmbedParam {
+    constructor(name, value) {
+      this.name = name;
+      this.value = value;
+    }
+  }
+  
+  module.exports = EmbedParam;
+
+// Content from src\model\reactionrole.model.js
+class ReactionRoleModel {
+    constructor(roleName, emoji) {
+        this.roleName = roleName;
+        this.emoji = emoji;
+    }
+}
+
+module.exports = ReactionRoleModel;
+
+// Content from src\model\reactionrolegroup.model.js
+class ReactionRoleGroupModel {
+  constructor(name, message, members, inline) {
+    this.name = name;
+    this.message = message;
+    this.members = members;
+    this.inline = inline;
+  }
+}
+
+module.exports = ReactionRoleGroupModel;
+
+// Content from src\repository\config.repository.js
+module.exports = {
+    ClientJSON: require("../config/client.config.json"),
+    ChannelJSON: require('../config/channel.config.json'),
+    CommandJSON: require('../config/command.config.json'),
+    ReactionRoleJSON: require('../config/reactionrole.config.json'),
+    RoleJSON: require('../config/role.config.json'),
+    SystemJSON: require('../config/system.config.json'),
+  };
+
+// Content from src\service\feature\reactionrole.service.js
+class ReactionRoleService {
+    constructor(configService, loggerService, roleService, memberService) {
+      this.configService = configService;
+      this.loggerService = loggerService;
+      this.roleService = roleService;
+      this.memberService = memberService;
+    }
+
+    GetReactionRoleGroups() {
+      return this.configService.ReactionRole.members;
+    }
+
+    IsRoleReaction(reaction) {
+      return this.GetAllReactionRoles().find((reactionRole) => reactionRole.Emoji === reaction.emoji.toString());
+    }
+
+    GetReactionRole(reaction) {
+      return this.GetAllReactionRoles().find((x) => x.Emoji === reaction.emoji.toString());
+    }
+
+    GetAllReactionRoles() {
+      return this.GetReactionRoleGroups().map((group) => group.Members).flat();
+    }
+
+    SetupReactionRoleListeners() {
+        this.clientService.client.on('messageReactionAdd', async (reaction, user) => {
+        if (reaction.partial) await reaction.fetch();
+        if (user.bot) return;
+
+        if (reaction.emoji.name === '⭐') {
+          await this.HandshakeTOS(user);
+        } else {
+          await this.ApplyReactionRoleChange(reaction, user);
+        }
+      });
+
+      this.clientService.client.on('messageReactionRemove', async (reaction, user) => {
+        if (reaction.partial) await reaction.fetch();
+        if (user.bot) return;
+
+        this.ApplyReactionRoleChange(reaction, user, true);
+      });
+    }
+
+    HandshakeTOS(user) {
+      const member = XenCord.Client.guilds.cache.get(this.configService.System.guildID)?.members.cache.get(user.id);
+      member.roles.add(this.roleService.getRulesRole().id);
+    }
+
+    ApplyReactionRoleChange(reaction, user, remove = false) {
+      const reactionRoleEmoji = this.IsRoleReaction(reaction);
+
+      if (reactionRoleEmoji) {
+        const member = this.memberService.GetMemberFromUser(user.id);
+        const reactionRole = this.GetReactionRole(reaction);
+        const memberRole = this.roleService.GetRoleByName(reactionRole.RoleName);
+        if (reactionRole) {
+          if (remove) {
+            member.roles.remove(memberRole);
+          } else {
+            member.roles.add(memberRole);
+          }
+        }
+      }
+    }
+}
+module.exports = ReactionRoleService;
+
+
+
+// Content from src\service\feature\speech-to-text.service.js
+const speech = require('@google-cloud/speech');
+
+class SpeechToTextService {
+  constructor() {
+    this.client = new speech.SpeechClient();
+  }
+
+  async transcribe(audioBuffer, encoding = 'LINEAR16', sampleRateHertz = 16000, languageCode = 'en-US') {
+    const request = {
+      audio: {
+        content: audioBuffer.toString('base64'),
+      },
+      config: {
+        encoding: encoding,
+        sampleRateHertz: sampleRateHertz,
+        languageCode: languageCode,
+      },
+    };
+
+    try {
+      const [response] = await this.client.recognize(request);
+      const transcription = response.results
+        .map(result => result.alternatives[0].transcript)
+        .join('\n');
+      return transcription;
+    } catch (error) {
+      console.error('Error transcribing audio:', error);
+      throw error;
+    }
+  }
+}
+
+module.exports = SpeechToTextService;
+
+
+// Content from src\service\feature\vcmanager.service.js
+const { PermissionsBitField, EmbedBuilder } = require('discord.js');
+
+class VCManagerService {
+  constructor() {}
+
+  async create(interaction, name, limit) {
+    // Create the channel
+    const channel = await interaction.guild.channels.create(name, {
+      type: 'GUILD_VOICE',
+      userLimit: limit,
+      permissionOverwrites: [
+        {
+          id: interaction.guild.roles.everyone.id,
+          deny: PermissionsBitField.Flags.ViewChannel,
+          type: 'role',
+        },
+        {
+          id: interaction.user.id,
+          allow: PermissionsBitField.Flags.Connect | PermissionsBitField.Flags.ViewChannel,
+          type: 'member',
+        },
+      ],
+    });
+    return channel;
+  }
+
+  async limit(interaction, channel, limit){
+    // Check if user has permission to change the user limit
+    const permissions = channel.permissionsFor(interaction.user);
+    if (!permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+      throw new Error('You do not have permission to change the user limit.');
+    }
+
+    // Update the user limit
+    await channel.edit({ userLimit: limit });
+
+    // Send confirmation message
+    const embed = new EmbedBuilder()
+      .setColor('#00ff00')
+      .setDescription(`Successfully updated user limit to ${limit}!`)
+    await interaction.reply({ embeds: [embed] });
+  }
+
+  async allow(interaction, channel, user) {
+    // Check if the command issuer has permission to manage the channel
+    const permissions = channel.permissionsFor(interaction.user);
+    if (!permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+      throw new Error('You do not have permission to manage the channel.');
+    }
+
+    // Allow the specified user to join the channel
+    await channel.permissionOverwrites.edit(user, {
+      [PermissionsBitField.Flags.Connect]: true,
+      [PermissionsBitField.Flags.ViewChannel]: true,
+    });
+
+    // Send confirmation message
+    const embed = new EmbedBuilder()
+      .setColor('#00ff00')
+      .setDescription(`Successfully allowed ${user.tag} to join the channel.`);
+    await interaction.reply({ embeds: [embed] });
+  }
+
+  async kick(interaction, channel, user) {
+    // Check if the command issuer has permission to manage the channel
+    const permissions = channel.permissionsFor(interaction.user);
+    if (!permissions.has(PermissionsBitField.Flags.ManageChannels)) {
+      throw new Error('You do not have permission to manage the channel.');
+    }
+  
+    // Check if the specified user is in the channel
+    if (user.voice.channelId !== channel.id) {
+      throw new Error(`${user.tag} is not in the specified channel.`);
+    }
+  
+    // Kick the specified user from the channel
+    await user.voice.setChannel(null);
+  
+    // Send confirmation message
+    const embed = new EmbedBuilder()
+      .setColor('#00ff00')
+      .setDescription(`Successfully kicked ${user.tag} from the channel.`);
+    await interaction.reply({ embeds: [embed] });
+  }
+
+
+}
+
+module.exports = VCManagerService;
+
+// Content from src\service\feature\verify.service.js
+class VerifyService {
+  constructor(configService) {
+    this.configService = configService;
+  }
+
+  async verify(interaction) {
+    // Check if the sender has the required roles
+    const hasVerifyRole = interaction.member.roles.cache.has(this.configService.Role.Verify);
+    const hasAdministratorRole = interaction.member.roles.cache.has(process.env.VERIFY_ROLE_ID);
+  
+    if (!hasVerifyRole) {
+      return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
+    }
+
+    const userToVerify = interaction.options.getUser('user');
+
+    if (!userToVerify) {
+      return interaction.reply({ content: 'Please mention a user to verify.', ephemeral: true });
+    }
+
+    const memberToVerify = await interaction.guild.members.fetch(userToVerify);
+
+    if (!this.isValidMember(memberToVerify)) {
+      return interaction.reply({ content: 'Unable to verify the user.', ephemeral: true });
+    }
+
+    await this.updateRoles(memberToVerify);
+    interaction.reply({ content: `${memberToVerify.user.username} has been verified!`, ephemeral: true });
+  }
+
+  hasVerifyRole(interaction) {
+    return interaction.member.roles.cache.has(this.configService.Role.Verify);
+  }
+
+  isValidMember(member) {
+    return member && member.user;
+  }
+
+  async updateRoles(member) {
+    await member.roles.remove(this.configService.Role.Unverified);
+    await member.roles.add(this.configService.Role.Verified);
+  }
+}
+
+module.exports = VerifyService;
+
+// Content from src\service\feature\voicecommand.service.js
+const { VoiceReceiver } = require('discord.js');
+const SpeechToTextService = require('./speech-to-text.service');
+
+class VoiceCommandService {
+  constructor(vcManagerService) {
+    this.vcManagerService = vcManagerService;
+    this.speechToTextService = new SpeechToTextService();
+  }
+
+  async joinAndListen(channel) {
+    const connection = await channel.join();
+    const receiver = connection.receiver;
+
+    connection.on('speaking', (user, speaking) => {
+      if (speaking) {
+        const audioStream = receiver.createStream(user, { mode: 'pcm' });
+        this.processAudioStream(audioStream);
+      }
+    });
+  }
+
+  async processAudioStream(audioStream) {
+    // Convert the audio stream to a buffer
+    const audioBuffer = [];
+    audioStream.on('data', (chunk) => {
+      audioBuffer.push(chunk);
+    });
+
+    audioStream.on('end', async () => {
+      const buffer = Buffer.concat(audioBuffer);
+      const transcription = await this.speechToTextService.transcribe(buffer);
+      this.processTranscription(transcription);
+    });
+  }
+
+  processTranscription(transcription) {
+    // Process the transcribed text for commands or other relevant information
+    console.log(`Transcribed Text: ${transcription}`);
+    // Add your command processing logic here
+  }
+}
+
+module.exports = VoiceCommandService;
+
+
+// Content from src\service\helper\conversation.helper.service.js
+const ConversationCacheModel = require('../../model/conversationcache.model');
+class ConversationHelperServicer {
+  conversationCache = new ConversationCacheModel();
+  getConversation(userId) {
+    return this.conversationCache.get(userId);
+  }
+
+  async updateConversation(userId, messageObj) {
+    let conversation = await this.getConversation(userId) || [];
+    conversation.push(messageObj);
+    if (conversation.length > 9) {
+      conversation.shift();
+    }
+    this.conversationCache.set(userId, conversation);
+  }
+}
+
+module.exports = ConversationHelperServicer;
+
+// Content from src\service\helper\lifecycle.helper.service.js
+class LifecycleHelperService {
+  constructor(clientService, commandService, conversationService, chatGPTService, messageService, channelService, sendTyping) {
+    this.clientService = clientService;
+    this.commandService = commandService;
+    this.conversationService = conversationService;
+    this.chatGPTService = chatGPTService;
+    this.messageService = messageService;
+    this.channelService = channelService;
+  }
+
+  async setupListeners() {
+    await this.clientService.client.on('ready', async () => {
+      console.log(`Logged in as ${this.clientService.client.user.tag}!`);
+      await this.commandService.setupListeners();
+      await this.commandService.registerCommands();
+    });
+
+    this.clientService.client.on('messageCreate', async (message) => {
+      if (message.author.bot) return;
+      if (message.mentions.has(this.clientService.client.user)) {
+        const typing = message.channel.sendTyping();
+        const userId = message.author.id;
+        const content = message.content;
+        const response = await this.chatGPTService.handleMessage(userId, content);
+    
+        if (response.length === 0) {
+          return;
+        }
+    
+        if (typeof response === 'string') {
+          await this.messageService.sendDiscordMessage(message.channel, response);
+        } else {
+          let combinedResponse = '';
+    
+          for (let i = 0; i < response.length; i++) {
+            const messageContent = response[i].content.trim();
+    
+            if (messageContent !== '') {
+              const responseText = combinedResponse + messageContent;
+    
+              if (responseText.length <= 2000) {
+                combinedResponse = responseText;
+              } else {
+                await this.messageService.sendDiscordMessage(message.channel, combinedResponse);
+                combinedResponse = messageContent;
+              }
+            }
+            if (i === response.length - 1) {
+              await this.messageService.sendDiscordMessage(message.channel, combinedResponse);
+              typing.stop();            
+            }
+          }
+        }
+      }
+    });
+  }
+}
+
+module.exports = LifecycleHelperService;
+
+
+// Content from src\service\helper\validation.helper.service.js
+class ValidationHelperService {
+  constructor(loggerService, configService) {
+    this.loggerService = loggerService;
+    this.configService = configService;
+  }
+
+  logValidationStart(validationType) {
+    this.loggerService.logSystem(`Starting ${validationType} validation...`);
+  }
+
+  logValidationSuccess(validationType, message) {
+    this.loggerService.logSuccess(`Validation succeeded for ${validationType}: ${message}`);
+  }
+
+  logValidationFailure(validationType, message, error) {
+    this.loggerService.logError(`Validation failed for ${validationType}: ${message}`, error);
+  }
+
+  logValidationEnd(validationType) {
+    this.loggerService.logSystem(`Completed ${validationType} validation.`);
+  }
+
+  validateConfig(config) {
+    if (config === null || config === undefined) {
+      throw new Error('Config is null or undefined.');
+    }
+  
+    try {
+      // Check if config is already an object
+      if (typeof config === 'object' && config !== null) {
+        return; // It's already an object, no need to parse
+      }
+  
+      // If it's a string, try to parse it
+      JSON.parse(config);
+    } catch (error) {
+      throw new Error(`Error parsing config: "${config}" is not valid JSON`);
+    }
+  }
+
+  validateAll() {
+    // TODO: Implement the logic to validate all configurations or other necessary validations.
+    // For now, it's just a placeholder.
+    console.log("Validating all configurations...");
+  }
+}
+
+console.log("ValidationHelperService is defined");
+module.exports = ValidationHelperService;
+
+
+// Content from src\service\library\chatgpt\chatgpt.service.js
+const axios = require("axios");
+const fs = require('fs');
+const ConfigService = require('../../system/config.service'); // Adjust the path as necessary
+
+const contentFromFile = fs.readFileSync('./system.txt', 'utf8');
+
+class ChatGPTService {
+  constructor(conversationService) {
+    this.conversationService = conversationService;
+    this.configService = new ConfigService();
+    this.apiKey = this.configService.getConfigValue('System').openAIKey; // Assuming the key in the System config is 'openAIKey'
+  }
+
+  async getResponse(conversation, userId) {
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.apiKey}`,
+    };
+
+    const messages = [
+      {
+        role: "system",
+        content: contentFromFile,
+      },
+    ].concat(conversation.map((message) => ({
+      role: message.role,
+      content: message.content ? message.content.replace(/<@!?(\d+)>/g, '') : '' // Check if content is defined before applying replace function
+    })));
+  
+    const data = {
+      model: "gpt-4",
+      messages: messages,
+      max_tokens: 1024,
+      temperature: 0.7,
+    };
+  
+    try {
+      const response = await axios.post(
+          "https://api.openai.com/v1/chat/completions",
+          data,
+          { headers: headers }
+      );
+  
+      const gptResponse = response.data.choices[0].message.content.trim();
+      this.conversationService.updateConversation(userId, {
+        role: "assistant",
+        content: gptResponse,
+      });
+      return gptResponse;
+      
+    } catch (error) {
+      console.error("Error getting ChatGPT response:", error);
+      return "I'm sorry, but I couldn't process your message.";
+    }
+  }
+
+  async handleMessage(userId, content) {
+    await this.conversationService.updateConversation(userId, {
+      role: 'user',
+      content: content,
+    });
+
+    const conversation = await this.conversationService.getConversation(userId) || [];
+    const response = await this.getResponse(conversation, userId);
+
+    await this.conversationService.updateConversation(userId, {
+        role: 'assistant',
+        content: response,
+    });
+    return response;
+  }
+}
+
+module.exports = ChatGPTService;
+
+
+// Content from src\service\library\discordjs\channel.service.js
+class ChannelService  {
+  Validate = () => {
+    this.Logger.Log.System(this.Message.Messages.system.startup.channel.start);
+    this.GetSystemChannels().forEach((option) => {
+      let channel = this.GetChannel(option[1]);
+      if (channel !== undefined) {
+        this.Logger.Log.Success(
+          `${this.Message.Messages.system.startup.channel.success}${option[0]} [${channel.name}]`
+        );
+      } else {
+        this.Logger.Log.Error(
+          `${this.Message.Messages.error.startup.channel}${option}`
+        );
+      }
+    });
+    this.Logger.Log.System(this.Message.Messages.system.startup.channel.done);
+  };
+
+  GetChannel = (channelID) => {
+    return this.Client.channels.cache.get(channelID);
+  };
+
+  GetSystemChannel = (channelIndex) => {
+    return this.GetChannel(
+      this.GetSystemChannels().find((channel) => {
+        return channel[0] == channelIndex;
+      })[1]
+    );
+  };
+
+  GetSystemChannels = () => {
+    let channelConfig = Object(this.Config.Channel);
+    return Object.keys(channelConfig)
+      .filter((option) => {
+        return option != 'Name';
+      })
+      .map((channel) => {
+        return [channel, channelConfig[channel]];
+      });
+  };
+}
+
+module.exports = ChannelService;
+
+// Content from src\service\library\discordjs\client.service.js
+const { Client } = require('discord.js');
+const ConfigService = require('../../system/config.service');
+
+class ClientService {
+  client;
+  configService;
+
+  constructor() {
+    this.configService = new ConfigService();
+    this.client = this.createClient();
+  }
+
+  createClient() {
+    return new Client({intents: 32767});
+  }   
+
+  get Client() {
+    return this.client;
+  }
+
+  getBotToken() {
+    return this.configService.getConfigValue('Client.botToken'); // Use the getConfigValue method with the correct key
+  }
+
+  async login() {
+    try {
+      const botToken = this.getBotToken(); 
+      await this.client.login(botToken);
+      console.log('Bot is now connected!');
+    } catch (error) {
+      console.error('Error connecting to Discord:', error);
+    }
+  }
+}
+
+module.exports = ClientService;
+
+
+// Content from src\service\library\discordjs\command.service.js
+const { MessageEmbed } = require('discord.js');
+
+class CommandService {
+  constructor(
+    configService,
+    clientService,
+    guildService,
+    validationHelperService, // Moved up
+    lifecycleHelperService,  // Moved up
+    loggerService,           // Moved down
+    vcManagerService,
+    verifyService,
+    voiceCommandService
+  ) {
+    this.validationHelperService = validationHelperService; // Moved up
+    this.lifecycleHelperService = lifecycleHelperService; // Moved up
+    this.loggerService = loggerService; // Moved down
+    this.configService = configService;
+    this.clientService = clientService;
+    this.guildService = guildService;
+    this.vcManagerService = vcManagerService;
+    this.verifyService = verifyService;
+    this.voiceCommandService = voiceCommandService;
+  }
+
+  async registerCommands() {
+    try {
+      const guild = await this.guildService.getGuild();
+      this.validationHelperService.validateConfig(this.configService.command.commands);
+      this.loggerService.logSystem(`Started refreshing application commands.`);
+
+      for (const [commandName, commandData] of Object.entries(this.configService.command.commands)) {
+        if (!commandData || !commandData.name) {
+          console.error(`Error with command: ${commandName}. Command data:`, commandData);
+          continue;
+        }
+        await guild.commands.create(commandData);
+        this.loggerService.logSuccess(`Registered command: ${commandName}`);
+      }
+
+      this.loggerService.logSuccess(`Successfully refreshed application commands.`);
+    } catch (error) {
+      console.error("Error in registerCommands:", error);
+      this.loggerService.logError(error);
+    }
+  }
+
+  setupListeners() {
+    this.clientService.client.on('interactionCreate', async (interaction) => {
+      if (interaction.isCommand()) {
+        await this.bind(interaction);
+      }
+    });
+  }
+
+  async bind(interaction) {
+    const { commandName, options } = interaction;
+
+    if (commandName === 'channel') {
+      await this.handleChannelCommand(interaction, options);
+    } else if (commandName === 'verify') {
+      await this.handleVerifyCommand(interaction, options);
+    } else if (commandName === 'join') {
+      await this.handleJoinCommand(interaction);
+    }
+  }
+
+  async handleChannelCommand(interaction, options) {
+    const subcommand = options.getSubcommand();
+    const subcommands = {
+      create: this.vcManagerService.create.bind(this.vcManagerService),
+      limit: this.vcManagerService.limit.bind(this.vcManagerService),
+      allow: this.vcManagerService.allow.bind(this.vcManagerService),
+      kick: this.vcManagerService.kick.bind(this.vcManagerService),
+    };
+
+    if (subcommands[subcommand]) {
+      await subcommands[subcommand](interaction);
+    } else {
+      await interaction.reply('Unknown subcommand.');
+    }
+  }
+
+  async handleVerifyCommand(interaction, options) {
+    await this.verifyService.verify(interaction, {
+      unverifiedRoleID: this.configService.getConfigValue('Client.unverifiedRoleID'),
+      verifiedRoleID: this.configService.getConfigValue('Client.verifiedRoleID')
+    });
+  }
+
+  async handleJoinCommand(interaction) {
+    const voiceChannel = interaction.member.voice.channel;
+    if (!voiceChannel) {
+      await interaction.reply('You need to be in a voice channel for me to join!');
+      return;
+    }
+
+    await this.voiceCommandService.joinChannel(voiceChannel);
+
+    const embed = new MessageEmbed()
+      .setColor('#00ff00')
+      .setDescription(`Successfully joined ${voiceChannel.name}!`);
+    await interaction.reply({ embeds: [embed] });
+  }
+}
+
+module.exports = CommandService;
+
+
+// Content from src\service\library\discordjs\embed.service.js
+const { EmbedBuilder } = require('discord.js');
+const EmbedParam = require('../../../model/embedparam.model');
+
+class EmbedService {
+  static createReactionRoleEmbed(reactionRoleGroup) {
+    const embedFields = reactionRoleGroup.members.map((member) => new EmbedParam(member.roleName, member.emoji));
+    return createBasicEmbedFromData(reactionRoleGroup.name, reactionRoleGroup.message, embedFields, reactionRoleGroup.inline);
+  }
+}
+
+const createBasicEmbed = (title, description) => {
+  return new EmbedBuilder()
+    .setTitle(title)
+    .setDescription(description)
+    .setColor('#ff0000');
+};
+
+const createBasicEmbedFromData = (title, description, embedParams, inline) => {
+  const embed = createBasicEmbed(title, description);
+  embedParams.forEach((data) => {
+    if (inline) {
+      embed.addFields({ name: data.name, value: data.value, inline: true });
+    } else {
+      embed.addFields({ name: `${data.name} // ${data.value}`, value: '--------------------', inline: false });
+    }
+  });
+  return embed;
+};
+
+module.exports = EmbedService;
+
+// Content from src\service\library\discordjs\guild.service.js
+const ConfigService = require('../../system/config.service.js');
+
+class GuildService {
+  constructor(clientService) {
+    this.clientService = clientService;
+    this.configService = new ConfigService();
+  }
+
+  getGuild() {
+    const guildID = this.configService.System.guildID;
+    return this.clientService.client.guilds.cache.get(guildID);
+  }
+}
+
+module.exports = GuildService;
+
+
+// Content from src\service\library\discordjs\member.service.js
+class MemberService {
+    constructor(configService, clientService) {
+      this.configService = configService;
+      this.clientService = clientService;
+    }
+  
+    getMemberFromUser(userID) {
+      return this.clientService.client.guilds.cache.get(this.configService.System.guildID).members.cache.get(userID);
+    }
+  }
+  
+  module.exports = MemberService;
+
+// Content from src\service\service.factory.js
+const BroadcastService = require('./system/broadcast.service');
+const LoggerService = require('./system/logger.service');
+const ConfigService = require('./system/config.service');
+const ClientService = require('./library/discordjs/client.service');
+const GuildService = require('./library/discordjs/guild.service');
+const CommandService = require('./library/discordjs/command.service');
+const ChatGPTService = require('./library/chatgpt/chatgpt.service');
+const LifecycleHelperService = require('./helper/lifecycle.helper.service');
+const StartupService = require('./system/startup.service');
+const ValidationHelperService = require('./helper/validation.helper.service');
+const VCManagerService = require('./feature/vcmanager.service');
+const VerifyService = require('./feature/verify.service');
+const ConversationHelperService = require('./helper/conversation.helper.service');
+const MemberService = require('./library/discordjs/member.service');
+const VoiceCommandService = require('./feature/voicecommand.service'); // Import the VoiceCommandService
+
+class ServiceFactory {
+  // Debugging statements
+  static debug() {
+    console.log('Inside ServiceFactory class definition.');
+  }
+
+  static createServices() {
+    const broadcastService = new BroadcastService();
+    const configService = new ConfigService();
+    const validationHelperService = new ValidationHelperService(configService);
+    const loggerService = new LoggerService(broadcastService);
+    const clientService = new ClientService();
+    const guildService = new GuildService(clientService, configService);
+    const memberService = new MemberService(configService, clientService);
+    const vcManagerService = new VCManagerService();
+    const verifyService = new VerifyService(configService);
+    const voiceCommandService = new VoiceCommandService();
+    const commandService = new CommandService(
+      configService,
+      clientService,
+      guildService,
+      loggerService,
+      validationHelperService,
+      vcManagerService,
+      verifyService,
+      voiceCommandService
+    );
+    const conversationService = new ConversationHelperService();
+    const chatGPTService = new ChatGPTService(conversationService);
+    const lifecycleHelperService = new LifecycleHelperService(
+      clientService,
+      commandService,
+      conversationService,
+      chatGPTService,
+      broadcastService
+    );
+    const startupService = new StartupService(clientService, lifecycleHelperService, validationHelperService, commandService);
+
+    return {
+      clientService,
+      guildService,
+      commandService,
+      chatGPTService,
+      lifecycleHelperService,
+      startupService,
+      broadcastService,
+      loggerService,
+      configService,
+      vcManagerService,
+      validationHelperService,
+      verifyService,
+      memberService,
+      voiceCommandService
+    };
+  }
+}
+
+module.exports = ServiceFactory;
+
+
+// Content from src\service\system\broadcast.service.js
+const MessageJSON = require('../../config/message.config.json');
+
+class BroadcastService {
+  constructor() {
+    this.Messages = MessageJSON;
+  }
+
+  async sendDiscordMessage(channel, content) {
+    const maxLength = 2000;
+  
+    if (content.length <= maxLength) {
+      await channel.send(content);
+    } else {
+      const messageParts = [];
+      let message = content;
+  
+      while (message.length > 0) {
+        if (message.length <= maxLength) {
+          messageParts.push(message);
+          message = '';
+        } else {
+          let subMessage = message.substring(0, maxLength);
+  
+          // Look for whitespace within last 10 characters
+          const index = subMessage.lastIndexOf(' ');
+          if (index >= subMessage.length - 10 && index !== -1) {
+            subMessage = subMessage.substring(0, index);
+          }
+  
+          // Strip the last character if it is a whitespace
+          if (subMessage.charAt(subMessage.length - 1) === ' ') {
+            subMessage = subMessage.substring(0, subMessage.length - 1);
+          }
+  
+          messageParts.push(subMessage);
+          message = message.substring(subMessage.length).trim();
+        }
+      }
+  
+      for (const part of messageParts) {
+        await channel.send(part);
+      }
+    }
+  }
+}
+
+module.exports = BroadcastService;
+
+// Content from src\service\system\config.service.js
+const {
+  ChannelJSON,
+  CommandJSON,
+  ReactionRoleJSON,
+  RoleJSON,
+  SystemJSON,
+  ClientJSON, // Import the ClientJSON configuration
+} = require('../../repository/config.repository');
+
+class ConfigService {
+  constructor() {
+    this.Client = ClientJSON;
+    this.Channel = ChannelJSON;
+    this.Command = CommandJSON;
+    this.ReactionRole = ReactionRoleJSON;
+    this.Role = RoleJSON;
+    this.System = SystemJSON;
+  }
+
+  getConfigValue(key) {
+    console.log("Key requested:", key); // For debugging  
+    switch (key) {
+      case 'Channel':
+        return this.Channel;
+      case 'Command':
+        return this.Command;
+      case 'ReactionRole':
+        return this.ReactionRole;
+      case 'Role':
+        return this.Role;
+      case 'System':
+        return this.System;
+      case 'Client': // Add this case
+        return this.Client;
+      default:
+        // Handle nested properties
+        const keys = key.split('.');
+        if (keys.length > 1 && this[keys[0]]) {
+          return this[keys[0]][keys[1]];
+        }
+        throw new Error(`Unknown config key: ${key}`);
+    }
+  }
+
+  GetAllConfigs() {
+    return [
+      this.Channel,
+      this.Command,
+      this.ReactionRole,
+      this.Role,
+      this.System,
+      this.Client // Add this line
+    ];
+  }
+
+  getBotToken() {
+    return this.Client.botToken; // Fetch the bot token from the Client configuration
+  }
+}
+
+module.exports = ConfigService;
+
+
+// Content from src\service\system\logger.service.js
+const chalk = require('chalk');
+const MessageService = require('./broadcast.service'); // Updated import
+
+const MessageCode = {
+  SYSTEM: 'system',
+  SUCCESS: 'success',
+  ERROR: 'error',
+  DEBUG: 'debug',
+};
+
+class LoggerService {
+  constructor(messageService) {
+    this.messageService = messageService;
+  }
+
+  logMessage(type, message, consoleColor) {
+    const prefix = consoleColor(this.messageService.Messages.logging.prefix[type]);
+    const logTime = chalk.blueBright(
+      `${new Date().toLocaleDateString('en-US')} ${new Date().toLocaleTimeString('en-US')}`
+    );
+    console.log(`<${prefix}>: ${message} [${logTime}]`);
+  }
+
+  logSystem(message) {
+    this.logMessage(MessageCode.SYSTEM, message, chalk.yellow);
+  }
+
+  logError(error) {
+    if (error instanceof Error) {
+      this.logMessage(MessageCode.ERROR, error.message, chalk.red);
+    }
+  }
+
+  logSuccess(message) {
+    this.logMessage(MessageCode.SUCCESS, message, chalk.green);
+  }
+
+}
+
+module.exports = LoggerService;
+
+
+// Content from src\service\system\startup.service.js
+//It may seem redundant to pass these dependencies [openai, messageHandler, guildService] in through the constructor instead of doing a hard import,
+//But this allows us to "stub" them out later for "unit testing" which by definition can only be dependent on one file. This is one area in which
+//We still add boilerplate bullshit code for the sake of testing, while in most other cases you wouldn't change code for tests.
+class StartupService {
+    constructor(clientService, lifecycleHelperService, validationHelperService, commandService) {
+        this.clientService = clientService;
+        this.lifecycleHelperService = lifecycleHelperService;
+        this.validationHelperService = validationHelperService;
+        this.commandService = commandService;
+    }
+  
+    async init() {
+        await this.validationHelperService.validateAll();
+        await this.lifecycleHelperService.setupListeners();
+        await this.clientService.login();
+    }
+  }
+  
+  module.exports = StartupService;
+
+// Content from src\system\DCodex.js
+
+
+// Content from src\system\DServer.js
+const DServer = require('./d-server');
+
+class WebServerService {
+  constructor(port, publicPath) {
+    this.server = new DServer(port, publicPath);
+  }
+
+  start() {
+    this.server.start();
+  }
+
+  stop() {
+    this.server.close();
+  }
+}
+
+module.exports = WebServerService;
+

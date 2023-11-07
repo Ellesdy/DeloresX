@@ -1,61 +1,55 @@
+// Importing configuration data from the config repository
 const {
   ChannelJSON,
   CommandJSON,
   ReactionRoleJSON,
   RoleJSON,
   SystemJSON,
-  ClientJSON, // Import the ClientJSON configuration
+  ClientJSON
 } = require('../../repository/config.repository');
 
+// The ConfigService class centralizes access to various configurations
 class ConfigService {
-  constructor() {
-    this.Client = ClientJSON;
-    this.Channel = ChannelJSON;
-    this.Command = CommandJSON;
-    this.ReactionRole = ReactionRoleJSON;
-    this.Role = RoleJSON;
-    this.System = SystemJSON;
-  }
+  // Assigning the imported JSON objects to class properties
+  Channel = ChannelJSON;
+  Command = CommandJSON;
+  ReactionRole = ReactionRoleJSON;
+  Role = RoleJSON;
+  System = SystemJSON;
+  Client = ClientJSON;
 
-  getConfigValue(key) {
-    console.log("Key requested:", key); // For debugging  
-    switch (key) {
-      case 'Channel':
-        return this.Channel;
-      case 'Command':
-        return this.Command;
-      case 'ReactionRole':
-        return this.ReactionRole;
-      case 'Role':
-        return this.Role;
-      case 'System':
-        return this.System;
-      case 'Client': // Add this case
-        return this.Client;
-      default:
-        // Handle nested properties
-        const keys = key.split('.');
-        if (keys.length > 1 && this[keys[0]]) {
-          return this[keys[0]][keys[1]];
-        }
-        throw new Error(`Unknown config key: ${key}`);
-    }
-  }
+  // Constructor for the ConfigService class
+  constructor() {}
 
-  GetAllConfigs() {
+  // Method to retrieve all configuration objects
+  GetAllConfigs = () => {
     return [
       this.Channel,
       this.Command,
       this.ReactionRole,
       this.Role,
       this.System,
-      this.Client // Add this line
+      this.Client
     ];
-  }
+  };
 
-  getBotToken() {
-    return this.Client.botToken; // Fetch the bot token from the Client configuration
-  }
+  // Method to get a specific configuration value by key
+  getConfigValue = (key) => {
+    // Split the key by dots to handle nested keys
+    const keys = key.split('.');
+    let result = this;
+
+    // Traverse the configuration object to get to the nested property
+    for (const k of keys) {
+      result = result[k];
+      if (result === undefined) {
+        // If at any point the key is not found, throw an error
+        throw new Error(`Config key ${key} not found`);
+      }
+    }
+    return result;
+  };
 }
 
+// Exporting the ConfigService class to be used in other parts of the application
 module.exports = ConfigService;

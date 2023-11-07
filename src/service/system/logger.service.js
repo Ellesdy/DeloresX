@@ -1,4 +1,5 @@
 const chalk = require('chalk');
+const MessageService = require('./broadcast.service'); // Updated import
 
 const MessageCode = {
   SYSTEM: 'system',
@@ -9,7 +10,15 @@ const MessageCode = {
 
 class LoggerService {
   constructor(messageService) {
-    this.messageService =  messageService;
+    this.messageService = messageService;
+  }
+
+  logMessage(type, message, consoleColor) {
+    const prefix = consoleColor(this.messageService.Messages.logging.prefix[type]);
+    const logTime = chalk.blueBright(
+      `${new Date().toLocaleDateString('en-US')} ${new Date().toLocaleTimeString('en-US')}`
+    );
+    console.log(`<${prefix}>: ${message} [${logTime}]`);
   }
 
   logSystem(message) {
@@ -26,13 +35,6 @@ class LoggerService {
     this.logMessage(MessageCode.SUCCESS, message, chalk.green);
   }
 
-  logMessage(type, message, consoleColor) {
-    const prefix = consoleColor(this.messageService.Messages.logging.prefix[type]);
-    const logTime = chalk.blueBright(
-      `${new Date().toLocaleDateString('en-US')} ${new Date().toLocaleTimeString('en-US')}`
-    );
-    console.log(`<${prefix}>: ${message} [${logTime}]`);
-  }
 }
 
 module.exports = LoggerService;

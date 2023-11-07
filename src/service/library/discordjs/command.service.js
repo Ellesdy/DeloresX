@@ -1,101 +1,56 @@
-const { MessageEmbed } = require('discord.js');
+const { REST, Routes } = require('discord.js');
 
 class CommandService {
   constructor(
     configService,
     clientService,
     guildService,
-    messageService,
     loggerService,
     validationHelperService,
     vcManagerService,
-    verifyService,
-    voiceCommandService // Add the VoiceCommandService as a dependency
+    verifyService
   ) {
     this.configService = configService;
     this.clientService = clientService;
     this.guildService = guildService;
-    this.messageService = messageService;
     this.loggerService = loggerService;
     this.validationHelperService = validationHelperService;
     this.vcManagerService = vcManagerService;
     this.verifyService = verifyService;
-    this.voiceCommandService = voiceCommandService; // Store the VoiceCommandService
+    this.rest = new REST({ version: '10' }).setToken(this.clientService.getBotToken());
   }
 
   async registerCommands() {
     try {
-      const guild = await this.guildService.getGuild();
-      this.validationHelperService.validateConfig(this.configService.Command.commands);
+      this.loggerService.logSystem('Started refreshing application (/) commands.');
 
-      this.loggerService.logSystem(
-        `${this.messageService.Messages.command.register.prefix} ${this.messageService.Messages.command.register.start}`
+      const commands = Object.values(this.configService.Command.commands);
+      const clientId = this.clientService.Client.user.id;
+      const guildId = this.guildService.getGuildId(); // Ensure getGuildId is implemented in GuildService
+
+      await this.rest.put(
+        Routes.applicationGuildCommands(clientId, guildId),
+        { body: commands }
       );
 
-      for (const [commandName, commandData] of Object.entries(this.configService.Command.commands)) {
-        await guild.commands.create(commandData);
-        this.loggerService.logSuccess(`Registered command: ${commandName}`);
-      }
-
-      this.loggerService.logSuccess(
-        `${this.messageService.Messages.command.register.prefix} ${this.messageService.Messages.command.register.success}`
-      );
+      this.loggerService.logSuccess('Successfully reloaded application (/) commands.');
     } catch (error) {
-      this.loggerService.logError(error.message, error);
+      this.loggerService.logError('Error registering commands:', error);
     }
   }
 
+  // Method to setup listeners for command interactions
   setupListeners() {
     this.clientService.Client.on('interactionCreate', async (interaction) => {
-      if (interaction.isCommand()) {
-        await this.bind(interaction);
-      }
+      if (!interaction.isCommand()) return;
+
+      const { commandName } = interaction;
+      // Implement command handling logic here
+      // For example:
+      // if (commandName === 'ping') {
+      //   await interaction.reply('Pong!');
+      // }
     });
-  }
-
-  async bind(interaction) {
-    const { commandName, options } = interaction;
-
-    if (commandName === 'channel') {
-      const subcommand = options.getSubcommand();
-      const subcommands = {
-        create: this.vcManagerService.create.bind(this.vcManagerService),
-        limit: this.vcManagerService.limit.bind(this.vcManagerService),
-        allow: this.vcManagerService.allow.bind(this.vcManagerService),
-        kick: this.vcManagerService.kick.bind(this.vcManagerService),
-      };
-
-      if (subcommands[subcommand]) {
-        await subcommands[subcommand](interaction);
-      } else {
-        await interaction.reply('Unknown subcommand.');
-      }
-    } else if (commandName === 'verify') {
-      await this.verifyService.verify(interaction, {
-        unverifiedRoleID: this.configService.getConfigValue('Client.unverifiedRoleID'),
-        verifiedRoleID: this.configService.getConfigValue('Client.verifiedRoleID')
-      });
-    } else if (commandName === 'join') {
-      await this.handleJoinCommand(interaction);
-    }
-  }
-
-  async handleJoinCommand(interaction) {
-    // Check if the user is in a voice channel
-    const voiceChannel = interaction.member.voice.channel;
-    if (!voiceChannel) {
-      await interaction.reply('You need to be in a voice channel for me to join!');
-      return;
-    }
-
-    // Instruct the VoiceCommandService to join the voice channel
-    await this.voiceCommandService.joinChannel(voiceChannel);
-
-    // Send a confirmation message
-    const embed = new MessageEmbed()
-      .setColor('#00ff00')
-      .setDescription(`Successfully joined ${voiceChannel.name}!`);
-    await interaction.reply({ embeds: [embed] });
   }
 }
 

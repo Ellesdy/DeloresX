@@ -1,7 +1,16 @@
+// client.test.js
 const { Client } = require('discord.js');
 const ClientService = require('../../../../src/service/library/discordjs/client.service');
 
-jest.mock('discord.js');
+jest.mock('discord.js', () => {
+  return {
+    Client: jest.fn().mockImplementation(() => {
+      return {
+        login: jest.fn()
+      };
+    })
+  };
+});
 
 describe('ClientService', () => {
   let clientService;
@@ -10,21 +19,14 @@ describe('ClientService', () => {
     clientService = new ClientService();
   });
 
-  it('should create a new Discord.js client', async () => {
-    const client = clientService.createClient();
-    expect(client).toBeInstanceOf(Client);
-  });
-
-  it('should return the Discord.js client', async () => {
-    const client = clientService.Client;
-    expect(client).toBeInstanceOf(Client);
+  it('should create a new Discord.js client', () => {
+    expect(clientService.client).toBeInstanceOf(Client);
   });
 
   it('should log the bot in', async () => {
-    const loginSpy = jest.spyOn(clientService.client, 'login').mockResolvedValue('mocked_token');
-    await clientService.login();
-    expect(loginSpy).toHaveBeenCalled();
+    const token = 'mocked_token';
+    clientService.client.login.mockResolvedValue(token);
+    await clientService.login(token);
+    expect(clientService.client.login).toHaveBeenCalledWith(token);
   });
-
-
 });

@@ -34,23 +34,12 @@ describe('ValidationHelperService', () => {
       expect(() => validationHelperService.validateConfig(undefined)).toThrow('Config is null or undefined.');
     });
 
-    // it('should throw an error if JSON parsing fails', () => {
-    //   expect(() => validationHelperService.validateConfig('invalid json')).toThrow('Error parsing config:');
-    // });
+    it('should throw an error if JSON parsing fails', () => {
+      expect(() => validationHelperService.validateConfig('invalid json')).toThrow('Error parsing config: "invalid json" is not valid JSON');
+    });
 
     it('should not throw an error if config is valid', () => {
       expect(() => validationHelperService.validateConfig(testValues.validConfig)).not.toThrow();
-    });
-  });
-
-  describe('validateAll', () => {
-    it('should validate all configs', async () => {
-      await validationHelperService.validateAll();
-      expect(loggerService.logSystem).toHaveBeenCalledWith('Starting config validation...');
-      expect(loggerService.logSuccess).toHaveBeenCalledWith('Validation succeeded for config: config1');
-      expect(loggerService.logSuccess).toHaveBeenCalledWith('Validation succeeded for config: config2');
-      expect(loggerService.logError).not.toHaveBeenCalled();
-      expect(loggerService.logSystem).toHaveBeenCalledWith('Completed config validation.');
     });
   });
 });

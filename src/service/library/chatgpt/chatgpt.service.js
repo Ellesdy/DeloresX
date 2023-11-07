@@ -7,8 +7,8 @@ const contentFromFile = fs.readFileSync('./system.txt', 'utf8');
 class ChatGPTService {
   constructor(conversationService) {
     this.conversationService = conversationService;
-    this.configService = new ConfigService();
-    this.apiKey = this.configService.getConfigValue('System').openAIKey; // Assuming the key in the System config is 'openAIKey'
+    this.configService = new ConfigService(); // Instantiate ConfigService
+    this.apiKey = this.configService.System.openAIKey; // Retrieve the OpenAI API key from the System configuration
   }
 
   async getResponse(conversation, userId) {
@@ -22,10 +22,11 @@ class ChatGPTService {
         role: "system",
         content: contentFromFile,
       },
-    ].concat(conversation.map((message) => ({
-      role: message.role,
-      content: message.content ? message.content.replace(/<@!?(\d+)>/g, '') : '' // Check if content is defined before applying replace function
-    })));
+      ...conversation.map((message) => ({
+        role: message.role,
+        content: message.content ? message.content.replace(/<@!?(\d+)>/g, '') : '' // Remove mentions from the content
+      }))
+    ];
   
     const data = {
       model: "gpt-4",

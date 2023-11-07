@@ -1,4 +1,7 @@
 const ServiceFactory = require('../../src/service/service.factory');
+// Debugging statements
+console.log('Is ServiceFactory defined?', typeof ServiceFactory);
+console.log('Is createServices a function?', typeof ServiceFactory.createServices);
 const BroadcastService = require('../../src/service/system/broadcast.service');
 const LoggerService = require('../../src/service/system/logger.service');
 const ConfigService = require('../../src/service/system/config.service');

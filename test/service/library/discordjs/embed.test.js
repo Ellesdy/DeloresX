@@ -14,16 +14,20 @@ describe('EmbedService', () => {
           { roleName: 'Subscriber', emoji: '👍' },
         ],
       };
-    const expectedEmbed = new EmbedBuilder()
-    .setTitle('Role Selection')
-    .setDescription('React to this message to get a role')
-    .setColor('#ff0000')
-    .addFields(
-      { name: 'Admin', value: '👑', inline: true },
-      { name: 'Moderator', value: '🛡️', inline: true },
-      { name: 'Subscriber', value: '👍', inline: true }
-    );
-    result = EmbedService.createReactionRoleEmbed(reactionRoleGroup);
+
+      const expectedEmbed = new EmbedBuilder()
+        .setTitle('Role Selection')
+        .setDescription('React to this message to get a role')
+        .setColor('#ff0000')
+        .addFields(
+          { name: 'Admin', value: '👑', inline: true },
+          { name: 'Moderator', value: '🛡️', inline: true },
+          { name: 'Subscriber', value: '👍', inline: true }
+        );
+
+      // Declare the result variable here
+      const result = EmbedService.createReactionRoleEmbed(reactionRoleGroup);
+
       expect(result.title).toBe(expectedEmbed.title);
       expect(result.description).toBe(expectedEmbed.description);
       expect(result.fields).toEqual(expectedEmbed.fields);

@@ -2,28 +2,37 @@ const chalk = require('chalk');
 const LoggerService = require('../../../src/service/system/logger.service');
 const MessageService = require('../../../src/service/system/broadcast.service');
 
+// Mock the chalk library for consistent coloring
+jest.mock('chalk', () => ({
+  yellow: jest.fn((text) => `<yellow>${text}</yellow>`),
+  red: jest.fn((text) => `<red>${text}</red>`),
+  green: jest.fn((text) => `<green>${text}</green>`),
+  blueBright: jest.fn((text) => `<blueBright>${text}</blueBright>`),
+}));
+
 describe('LoggerService', () => {
   let loggerService;
   let messageServiceMock;
 
   beforeEach(() => {
-    messageServiceMock = new MessageService();
+    // Mock the MessageService if it's used within the LoggerService
+    messageServiceMock = {
+      broadcastMessage: jest.fn(),
+      // ... other methods if they exist
+    };
     loggerService = new LoggerService(messageServiceMock);
-    jest.useFakeTimers(); // Use Jest timer mock
+    jest.spyOn(global.console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers(); // Run any pending timers
-    jest.useRealTimers(); // Restore the real timers
+    jest.clearAllMocks(); // Clears any mocks and their calls
   });
 
   describe('logSystem', () => {
     it('should log a system message', () => {
       const message = 'System message';
-      const expectedOutput = `<${chalk.yellow('SYSTEM')}>: ${message} [${chalk.blueBright(new Date().toLocaleString('en-US').replace(",", ""))}]`;
-      console.log = jest.fn();
+      const expectedOutput = `<yellow>SYSTEM</yellow>: ${message} [<blueBright>${new Date().toLocaleString('en-US').replace(",", "")}</blueBright>]`;
       loggerService.logSystem(message);
-      jest.advanceTimersByTime(1000); // Advance the time by 1 second
       expect(console.log).toHaveBeenCalledWith(expectedOutput);
     });
   });
@@ -32,17 +41,13 @@ describe('LoggerService', () => {
     it('should log an error message', () => {
       const errorMessage = 'An error occurred';
       const error = new Error(errorMessage);
-      const expectedOutput = `<${chalk.red('ERROR')}>: ${errorMessage} [${chalk.blueBright(new Date().toLocaleString('en-US').replace(",", ""))}]`;
-      console.log = jest.fn();
+      const expectedOutput = `<red>ERROR</red>: ${errorMessage} [<blueBright>${new Date().toLocaleString('en-US').replace(",", "")}</blueBright>]`;
       loggerService.logError(error);
-      jest.advanceTimersByTime(1000); // Advance the time by 1 second
       expect(console.log).toHaveBeenCalledWith(expectedOutput);
     });
 
     it('should not log anything if the argument is not an instance of Error', () => {
-      console.log = jest.fn();
       loggerService.logError('This is not an Error object');
-      jest.advanceTimersByTime(1000); // Advance the time by 1 second
       expect(console.log).not.toHaveBeenCalled();
     });
   });
@@ -50,10 +55,8 @@ describe('LoggerService', () => {
   describe('logSuccess', () => {
     it('should log a success message', () => {
       const message = 'Success message';
-      const expectedOutput = `<${chalk.green('SUCCESS')}>: ${message} [${chalk.blueBright(new Date().toLocaleString('en-US').replace(",", ""))}]`;
-      console.log = jest.fn();
+      const expectedOutput = `<green>SUCCESS</green>: ${message} [<blueBright>${new Date().toLocaleString('en-US').replace(",", "")}</blueBright>]`;
       loggerService.logSuccess(message);
-      jest.advanceTimersByTime(1000); // Advance the time by 1 second
       expect(console.log).toHaveBeenCalledWith(expectedOutput);
     });
   });
